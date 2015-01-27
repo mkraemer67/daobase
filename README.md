@@ -1,5 +1,13 @@
 # daobase
 
-Minimalistic DAO in Coffeescript providing CRUD functionality and transactions with a focus on easy usability on top of PostgreSQL.
+Flexible DAO on top of PostgreSQL with encapsulated transaction support.
+
+
+## docs
+
+Have a look at the test case to understand how to use daobase.
+
+
+## notes
 
 Currently still under heavy development.

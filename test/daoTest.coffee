@@ -4,8 +4,14 @@ should = chai.should()
 dbUrl = 'postgres://postgres:postgres@localhost/test'
 
 describe 'daobase', ->
-    dao = require './dao'
+    dao = require '../src/dao'
     dao = new dao(dbUrl)
+
+    it 'should drop table if exists', (done) ->
+        query = 'DROP TABLE IF EXISTS daobase_test'
+        dao.sqlOp query, (err, result) ->
+            should.not.exist err
+            done()
 
     it 'should create a table', (done) ->
         query =
@@ -13,19 +19,19 @@ describe 'daobase', ->
                id serial,
                string text,
                number integer
-             );'
-        dao.sqlOp [query], (err, result) ->
+             )'
+        dao.sqlOp query, (err, result) ->
             should.not.exist err
             done()
 
     it 'get should not find a row', (done) ->
         dao.get
-            table : 'daobase_test'
-            field : 'id'
-            value : 1
+            table  : 'daobase_test'
+            fields : 'id'
+            values : 1
             (err, result) ->
                 err.should.be.truthy
-                err.type.should.equal 'DAOBASE_GET_ROW_NOT_FOUND'
+                err.type.should.equal 'DAOBASE_GET_NO_MATCH'
                 should.not.exist result
                 done()
 
@@ -40,14 +46,49 @@ describe 'daobase', ->
 
     it 'should get the row', (done) ->
         dao.get
-            table : 'daobase_test'
-            field : 'id'
-            value : 1
+            table  : 'daobase_test'
+            fields : ['id', 'number']
+            values : [1, 0]
             (err, result) ->
                 should.not.exist err
                 result.id.should.equal 1
                 result.string.should.equal 'test'
                 result.number.should.equal 0
+                done()
+
+    it 'should not find due to wrong select', (done) ->
+        dao.get
+            table  : 'daobase_test'
+            fields : ['id', 'number']
+            values : [1, 99]
+            (err, result) ->
+                err.should.be.truthy
+                err.type.should.equal 'DAOBASE_GET_NO_MATCH'
+                should.not.exist result
+                done()
+
+    it 'should update the row', (done) ->
+        dao.update
+            table     : 'daobase_test'
+            updFields : ['string', 'number']
+            updValues : ['100', 100]
+            selFields : 'id'
+            selValues : 1
+            (err, result) ->
+                should.not.exist.err
+                result.should.equal 1
+                done()
+
+    it 'should reflect the updates', (done) ->
+        dao.get
+            table  : 'daobase_test'
+            fields : 'id'
+            values : 1
+            (err, result) ->
+                should.not.exist err
+                result.id.should.equal 1
+                result.string.should.equal '100'
+                result.number.should.equal 100
                 done()
 
     tx = undefined
@@ -69,9 +110,9 @@ describe 'daobase', ->
 
     it 'row should be visible for transaction', (done) ->
         tx.get
-            table : 'daobase_test'
-            field : 'id'
-            value : 2
+            table  : 'daobase_test'
+            fields : 'id'
+            values : 2
             (err, result) ->
                 should.not.exist err
                 result.id.should.equal 2
@@ -81,12 +122,12 @@ describe 'daobase', ->
 
     it 'row should not be there outside transaction', (done) ->
         dao.get
-            table : 'daobase_test'
-            field : 'id'
-            value : 2
+            table  : 'daobase_test'
+            fields : 'id'
+            values : 2
             (err, result) ->
                 err.should.be.truthy
-                err.type.should.equal 'DAOBASE_GET_ROW_NOT_FOUND'
+                err.type.should.equal 'DAOBASE_GET_NO_MATCH'
                 should.not.exist result
                 done()
 
@@ -104,9 +145,9 @@ describe 'daobase', ->
                 should.not.exist err
                 result.should.be.true
                 dao.get
-                    table : 'daobase_test'
-                    field : 'id'
-                    value : '3'
+                    table  : 'daobase_test'
+                    fields : 'id'
+                    values : '3'
                     (err, result) ->
                         should.not.exist err
                         result.id.should.equal 3
@@ -123,4 +164,25 @@ describe 'daobase', ->
             (err, result) ->
                 should.not.exist err
                 result.should.be.an 'number'
+                done()
+
+    it 'delete should work', (done) ->
+        dao.delete
+            table  : 'daobase_test'
+            fields : ['string', 'number']
+            values : ['test', 0]
+            (err, result) ->
+                should.not.exist err
+                result.should.equal 1
+                done()
+
+    it 'delete should not work when called again', (done) ->
+        dao.delete
+            table  : 'daobase_test'
+            fields : ['string', 'number']
+            values : ['test', 0]
+            (err, result) ->
+                err.should.be.truthy
+                err.type.should.equal 'DAOBASE_DELETE_NO_MATCH'
+                should.not.exist result
                 done()
