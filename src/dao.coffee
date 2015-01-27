@@ -168,6 +168,7 @@ class Dao
 
     tx: (cb) ->
         d = new Dao()
+        d = _.assign d, this
         d.dbUrl = this.dbUrl
         connect d, (err) ->
             if err
