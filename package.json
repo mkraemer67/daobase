@@ -1,0 +1,16 @@
+{
+    "name": "daobase",
+    "version": "0.1.0",
+    "description": "minimalistic DAO in Coffeescript providing CRUD functionality and transactions",
+    "author": "Martin Krämer <mkraemer.de@gmail.com>",
+    "main": "dao.coffee",
+    "dependencies": {
+        "chai"               : "1.10.0",
+        "lodash"             : "2.4.1",
+        "mocha"              : "2.1.0",
+        "pg"                 : "4.2.0"
+    },
+    "engines": {
+        "node": "0.10.x"
+    }
+}
