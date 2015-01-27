@@ -266,7 +266,6 @@ class Dao
             data.fields = [data.fields]
             data.values = [data.values]
         data.fields = escape data.fields
-        data.values = escape data.values
         sql = 'DELETE FROM "' + data.table + '" WHERE ' +
             (f[0] + '=$' + f[1] for f in _.zip data.fields, [1..data.fields.length]).join ' AND '
         this.sqlOp [sql, data.values], (err, result) ->
