@@ -3,9 +3,13 @@ should = chai.should()
 
 dbUrl = 'postgres://postgres:postgres@localhost/test'
 
+log =
+    err   : (obj) -> console.log JSON.stringify obj
+    debug : (obj) -> console.log JSON.stringify obj
+
 describe 'daobase', ->
     dao = require '../src/dao'
-    dao = new dao(dbUrl)
+    dao = new dao dbUrl, log
 
     it 'should drop table if exists', (done) ->
         query = 'DROP TABLE IF EXISTS daobase_test'
@@ -75,6 +79,7 @@ describe 'daobase', ->
             selFields : 'id'
             selValues : 1
             (err, result) ->
+                console.log err, result
                 should.not.exist.err
                 result.should.equal 1
                 done()
@@ -140,7 +145,9 @@ describe 'daobase', ->
         dao.insert
             table  : 'daobase_test'
             fields : ['id', 'number']
-            values : [3, 10]
+            values :
+                number : 10
+                id     : 3
             (err, result) ->
                 should.not.exist err
                 result.should.be.true

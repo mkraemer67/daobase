@@ -28,6 +28,13 @@ connect = (o, cb) ->
 escape = (arr) ->
     return ('"' + elem + '"' for elem in arr)
 
+lineUp = (fields, values) ->
+    if _.isArray values
+        return values
+    if fields.length is 1
+        return [values]
+    return (values[f] for f in fields)
+
 class Dao
     constructor: (dbUrl, log) ->
         this.dbUrl = dbUrl
@@ -116,7 +123,7 @@ class Dao
             return cb err
         if not (_.isArray data.fields)
             data.fields = [data.fields]
-            data.values = [data.values]
+        data.values = lineUp data.fields, data.values
         data.fields = escape data.fields
         query = 'SELECT * FROM "' + data.table + '" WHERE ' +
             (f[0] + '=$' + f[1] for f in _.zip data.fields, [1..data.values.length]).join ' AND '
@@ -170,9 +177,9 @@ class Dao
                 level : 'err'
                 err   : err
             return cb err
-        if not _.isArray data.values
-            data.values = [data.values]
-            data.fields = [data.fields] unless not data.fields?
+        if data.fields
+            data.fields = [data.fields] unless _.isArray data.fields
+            data.values = lineUp data.fields, data.values
         data.fields = escape data.fields unless not data.fields?
         query = 'INSERT INTO "' + data.table + '" '
         query += '(' + (field for field in data.fields) + ') ' unless not data.fields?
@@ -213,12 +220,10 @@ class Dao
                     err   : err
                     level : 'err'
                 return cb err
-        if not _.isArray data.updFields
-            data.updFields = [data.updFields]
-            data.updValues = [data.updValues]
-        if not _.isArray data.selFields
-            data.selFields = [data.selFields]
-            data.selValues = [data.selValues]
+        data.updFields = [data.updFields] unless _.isArray data.updFields
+        data.selFields = [data.selFields] unless _.isArray data.selFields
+        data.updValues = lineUp data.updFields, data.updValues
+        data.selValues = lineUp data.selFields, data.selValues
         data.updFields = escape data.updFields
         data.selFields = escape data.selFields
         nUpd = data.updValues.length
@@ -262,9 +267,8 @@ class Dao
                 err   : err
                 level : 'err'
             return cb err
-        if not _.isArray data.fields
-            data.fields = [data.fields]
-            data.values = [data.values]
+        data.fields = [data.fields] unless _.isArray data.fields
+        data.values = lineUp data.fields, data.values
         data.fields = escape data.fields
         sql = 'DELETE FROM "' + data.table + '" WHERE ' +
             (f[0] + '=$' + f[1] for f in _.zip data.fields, [1..data.fields.length]).join ' AND '
