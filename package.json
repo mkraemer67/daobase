@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "url": "https://github.com/mkraemer67/daobase",
     "license": "Apache 2.0",
-    "description": "minimalistic DAO in Coffeescript providing CRUD functionality and transactions",
+    "description": "flexible DAO on top of PostgreSQL with encapsulated transaction support",
     "author": "Martin Krämer <mkraemer.de@gmail.com>",
     "main": "lib/dao.js",
     "dependencies": {
