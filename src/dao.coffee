@@ -167,8 +167,7 @@ class Dao
             cb null, result.rowCount
 
     tx: (cb) ->
-        d = new Dao()
-        d = _.assign d, this
+        d = new this.constructor dbUrl
         d.dbUrl = this.dbUrl
         connect d, (err) ->
             if err
