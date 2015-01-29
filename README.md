@@ -6,13 +6,8 @@ It encapsulates transactions and allows basic CRUD operations. Native SQL is acc
 
 ## get started
 
-Inherit from the provided class and build your functionality on top. It's as simple as that!
-
-
-## docs
-
 Have a look at the test case to understand how to use daobase.
-
+For your own application, just inherit from the provided class and build your functionality on top. It's as simple as that!
 
 ## notes
 
