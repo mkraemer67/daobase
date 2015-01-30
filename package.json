@@ -1,9 +1,9 @@
 {
     "name": "daobase",
-    "version": "0.3.5",
+    "version": "0.3.6",
     "url": "https://github.com/mkraemer67/daobase",
     "license": "Apache 2.0",
-    "description": "flexible DAO on top of PostgreSQL with encapsulated transaction support and logging hooks",
+    "description": "lightweight data access object on top of PostgreSQL with encapsulated transaction support and logging",
     "author": "Martin Krämer <mkraemer.de@gmail.com>",
     "main": "lib/dao.js",
     "dependencies": {
