@@ -2,7 +2,12 @@
 
 daobase provides a very lightweight and easy to use DAO based on postgreSQL. 
 
-It encapsulates transactions and allows basic CRUD operations. Native SQL is accessible for other use cases. External logging frameworks are easily hookable and daobase provides extensive tracing output for error analysis.
+## features
+* encapsulates transactions and allows basic CRUD operations
+* native SQL is accessible for other use cases
+* external logging frameworks are easily hookable 
+* daobase provides extensive tracing output for error analysis
+* daobase runs in a production environment and is thus constantly tested for stability
 
 ## get started
 
