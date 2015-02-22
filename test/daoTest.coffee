@@ -175,16 +175,12 @@ describe 'daobase', ->
 
     it 'getMulti should return whole table', (done) ->
         dao.getMulti
-            table  : 'daobase_test'
-            fields : []
-            values : []
+            table : 'daobase_test'
             (err, result) ->
                 should.not.exist err
                 result.length.should.equal 4
                 for r in result
                     r.id.should.be.truthy
-                    r.number.should.be.truthy
-                    r.string.should.be.truthy
                 done()
 
     it 'getMulti should return single row', (done) ->
