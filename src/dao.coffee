@@ -161,7 +161,8 @@ class Dao
                     response : result.rows[0]
             cb null, result.rows[0]
 
-    # todo : getMulti
+    getMulti: (data, cb) ->
+        return
 
     insert: (data, cb) ->
         self = this

@@ -173,6 +173,34 @@ describe 'daobase', ->
                 result.should.be.an 'number'
                 done()
 
+    it 'getMulti should return whole table', (done) ->
+        dao.getMulti
+            table  : 'daobase_test'
+            fields : []
+            values : []
+            (err, result) ->
+                should.not.exist err
+                result.length.should.equal 4
+                for r in result
+                    r.id.should.be.truthy
+                    r.number.should.be.truthy
+                    r.string.should.be.truthy
+                done()
+
+    it 'getMulti should return single row', (done) ->
+        dao.getMulti
+            table  : 'daobase_test'
+            fields : ['id', 'number']
+            values :
+                id     : 3
+                number : 10
+            (err, result) ->
+                should.not.exist err
+                result.length.should.equal 1
+                result[0].id.should.equal 3
+                result[0].number.should.equal 10
+                done()
+
     it 'delete should work', (done) ->
         dao.delete
             table  : 'daobase_test'
