@@ -121,14 +121,7 @@ class Dao
                 level : 'err'
                 err   : err
             return cb err
-        if not (_.isArray data.fields)
-            data.fields = [data.fields]
-        data.values = lineUp data.fields, data.values
-        data.fields = escape data.fields
-        query = 'SELECT * FROM "' + data.table + '" WHERE ' +
-            (f[0] + '=$' + f[1] for f in _.zip data.fields, [1..data.values.length]).join ' AND '
-        sql = [query, data.values]
-        this.sqlOp sql, (err, result) ->
+        this.getMulti data, (err, result) ->
             if err
                 err =
                     type : 'DAOBASE_GET_ERROR'
@@ -137,7 +130,7 @@ class Dao
                     level : 'err'
                     err   : err
                 return cb err
-            if result.rows.length < 1
+            if result.length < 1
                 err =
                     type : 'DAOBASE_GET_NO_MATCH'
                     data : data
@@ -145,7 +138,7 @@ class Dao
                     level : 'err'
                     err   : err
                 return cb err
-            if result.rows.length > 1
+            if result.length > 1
                 err =
                     type : 'DAOBASE_GET_MULTIPLE_MATCHES'
                     data : data
@@ -158,10 +151,50 @@ class Dao
                 msg   : 'daobase.get success'
                 data  :
                     query    : data
-                    response : result.rows[0]
-            cb null, result.rows[0]
+                    response : result[0]
+            cb null, result[0]
 
-    # todo : getMulti
+    getMulti: (data, cb) ->
+        self = this
+        this.log
+            msg   : 'daobase.getMulti request'
+            level : 'debug'
+            data  : data
+        if not (data? and data.table)
+            err =
+                type : 'DAOBASE_GETMULTI_INVALID_REQUEST'
+                data : data
+            this.log
+                level : 'err'
+                err   : err
+            return cb err
+        data.fields ?= []
+        data.values ?= []
+        if not (_.isArray data.fields)
+            data.fields = [data.fields]
+        data.values = lineUp data.fields, data.values
+        data.fields = escape data.fields
+        query = 'SELECT * FROM "' + data.table + '" '
+        if data.fields.length > 0
+            s = (f[0] + '=$' + f[1] for f in _.zip data.fields, [1..data.values.length]).join ' AND '
+            query += "WHERE " + s unless s.length is 0
+        sql = [query, data.values]
+        this.sqlOp sql, (err, result) ->
+            if err
+                err =
+                    type : 'DAOBASE_GETMULTI_ERROR'
+                    err  : err
+                self.log
+                    level : 'err'
+                    err   : err
+                return cb err
+            self.log
+                level : 'debug'
+                msg   : 'daobase.getMulti success'
+                data  :
+                    query    : data
+                    response : result.rows
+            cb null, result.rows
 
     insert: (data, cb) ->
         self = this
