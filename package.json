@@ -1,6 +1,6 @@
 {
     "name": "daobase",
-    "version": "0.3.7",
+    "version": "0.3.8",
     "url": "https://github.com/mkraemer67/daobase",
     "license": "Apache 2.0",
     "description": "lightweight data access object on top of PostgreSQL with encapsulated transaction support and logging",
